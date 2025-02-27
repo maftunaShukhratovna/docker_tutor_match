@@ -1,0 +1,51 @@
+services:
+    tutor_match_web:
+        container_name: tutor_match_web
+        image: nginx:alpine
+        ports:
+            - "8080:80"
+        volumes:
+            - ./:/var/www
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - tutor_match_app
+        networks:
+            - tutor_match_network
+
+    tutor_match_app:
+        container_name: tutor_match_app
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        depends_on:
+            - tutor_match_db
+        volumes:
+            - ./:/var/www
+        networks:
+            - tutor_match_network
+        ports:
+            - "9092:9000"
+        command: >
+            sh -c "chmod -R 777 storage bootstrap/cache && php-fpm"
+
+    tutor_match_db:
+        image: mysql
+        container_name: tutor_match_db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - tutor_match_database:/var/lib/mysql
+        networks:
+            - tutor_match_network
+        ports:
+            - "3344:3306"
+
+networks:
+    tutor_match_network:
+        driver: bridge
+
+volumes:
+    tutor_match_database:
