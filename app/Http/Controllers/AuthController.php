@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use Laravel\Passport\HasApiTokens;
 
 class AuthController extends Controller
 {
@@ -23,7 +22,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response()->json(['message' => 'Foydalanuvchi muvaffaqiyatli ro‘yxatdan o‘tdi!']);
+        return response()->json(['message' => 'Foydalanuvchi muvaffaqiyatli royxatdan otdi!']);
     }
 
     public function login(Request $request)
@@ -34,7 +33,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Noto‘g‘ri email yoki parol'], 401);
+            return response()->json(['message' => 'Notogri email yoki parol'], 401);
         }
 
         $user = Auth::user();
